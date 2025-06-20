@@ -14,7 +14,7 @@ const VideoPlayer = ({mediaId}) => {
     }, [mediaId])
     
   return (
-    <video ref={videoRef} data-cld-public-id={mediaId} controls className='w-[100%] h-[100%]' />
+    <video ref={videoRef} data-cld-public-id={mediaId} controls muted playsInline className='w-[100%] h-[100%]' />
   )
 }
 
