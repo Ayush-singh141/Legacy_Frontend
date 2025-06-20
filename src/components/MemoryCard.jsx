@@ -59,6 +59,21 @@ function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = fa
     }
   };
 
+  function getCloudinaryMp4Url(url) {
+    if (!url) return '';
+    // If already ends with .mp4 and has vc_h264,ac_aac, return as is
+    if (url.endsWith('.mp4') && url.includes('/vc_h264,ac_aac/')) return url;
+    // If Cloudinary URL, force /vc_h264,ac_aac/ and .mp4 delivery
+    if (url.includes('cloudinary')) {
+      // Insert /vc_h264,ac_aac/ after /upload if not present
+      let newUrl = url.replace(/\/upload(\/)?/, '/upload/vc_h264,ac_aac/');
+      // Ensure .mp4 extension
+      if (!newUrl.endsWith('.mp4')) newUrl += '.mp4';
+      return newUrl;
+    }
+    return url;
+  }
+
   return (
     <div 
       className={`card ${className} ${!isDetailView ? 'cursor-pointer hover:shadow-lg transition-shadow' : ''}`}
@@ -141,4 +156,4 @@ function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = fa
   );
 }
 
-export default MemoryCard; 
+export default MemoryCard;
