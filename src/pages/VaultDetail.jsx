@@ -359,7 +359,7 @@ function VaultDetail() {
           {/* Upload Modal */}
           {uploadModalOpen && (
             <div className="fixed inset-0 bg-black/50 flex  justify-center p-4 z-50">
-              <div className="bg-white rounded-xl p-4 sm:p-6 w-full h-[20%] lg:h-[70%] md:h-[37%] max-w-md">
+              <div className="bg-white rounded-xl p-4 sm:p-6 w-full h-[27%] lg:h-[50%] md:h-[50%] max-w-md">
                 <h2 className="vintage-title text-xl sm:text-2xl mb-4">Upload a Memory</h2>
                 <form onSubmit={handleUpload} className="space-y-4">
                   <div>
