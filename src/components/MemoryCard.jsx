@@ -8,7 +8,7 @@ import {
   TrashIcon
 } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
-
+import ReactPlayer from 'react-player'
 function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = false, onDelete }) {
   const navigate = useNavigate();
   console.log('MemoryCard Props:', { memory, isAdmin, isDetailView });
@@ -71,11 +71,16 @@ function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = fa
             className={`w-full h-full ${isDetailView ? 'object-contain' : 'object-cover'} bg-vintage-100`}
           />
         ) : memory.mediaType === 'video' ? (
-          <video
-            src={memory.mediaUrl}
-            controls={isDetailView}
-            className={`w-full h-full ${isDetailView ? 'object-contain' : 'object-cover'} bg-vintage-100`}
+          <ReactPlayer
+          url={memory.mediaUrl}
+          playing={false}
+          controls={isDetailView}
+          muted={true}
+          width="100%"
+          height="100%"
+          style={{ objectFit: isDetailView ? 'contain' : 'cover' ,backgroundColor: '#fdf6e3'}}
           />
+
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-vintage-100">
             {isDetailView ? (
