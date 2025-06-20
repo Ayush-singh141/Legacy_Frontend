@@ -9,6 +9,12 @@ import {
 } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 import ReactPlayer from 'react-player'
+
+function isMobileDevice() {
+  if (typeof navigator === 'undefined') return false;
+  return /Mobi|Android|iPhone|iPad|iPod|Opera Mini|IEMobile|WPDesktop/i.test(navigator.userAgent);
+}
+
 function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = false, onDelete }) {
   const navigate = useNavigate();
   console.log('MemoryCard Props:', { memory, isAdmin, isDetailView });
@@ -58,6 +64,21 @@ function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = fa
     }
   };
 
+  function getCloudinaryMp4Url(url) {
+    if (!url) return '';
+    // If already ends with .mp4 and has vc_h264,ac_aac, return as is
+    if (url.endsWith('.mp4') && url.includes('/vc_h264,ac_aac/')) return url;
+    // If Cloudinary URL, force /vc_h264,ac_aac/ and .mp4 delivery
+    if (url.includes('cloudinary')) {
+      // Insert /vc_h264,ac_aac/ after /upload if not present
+      let newUrl = url.replace(/\/upload(\/)?/, '/upload/vc_h264,ac_aac/');
+      // Ensure .mp4 extension
+      if (!newUrl.endsWith('.mp4')) newUrl += '.mp4';
+      return newUrl;
+    }
+    return url;
+  }
+
   return (
     <div 
       className={`card ${className} ${!isDetailView ? 'cursor-pointer hover:shadow-lg transition-shadow' : ''}`}
@@ -71,16 +92,39 @@ function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = fa
             className={`w-full h-full ${isDetailView ? 'object-contain' : 'object-cover'} bg-vintage-100`}
           />
         ) : memory.mediaType === 'video' ? (
-          <ReactPlayer
-          url={memory.mediaUrl}
-          playing={false}
-          controls={isDetailView}
-          muted={true}
-          width="100%"
-          height="100%"
-          style={{ objectFit: isDetailView ? 'contain' : 'cover' ,backgroundColor: '#fdf6e3'}}
-          />
-
+          isMobileDevice() ? (
+            <video
+              src={getCloudinaryMp4Url(memory.mediaUrl)}
+              controls
+              playsInline
+              preload="metadata"
+              style={{ width: '100%', height: '100%', objectFit: isDetailView ? 'contain' : 'cover', backgroundColor: '#fdf6e3' }}
+              poster={memory.thumbnailUrl || ''}
+              onError={e => { e.target.poster=''; e.target.controls=false; e.target.outerHTML='<div style=\'color:#b91c1c;padding:1em;text-align:center;\'>Video failed to load. Try again later or on desktop.</div>'; }}
+            >
+              Sorry, your browser does not support embedded videos.
+            </video>
+          ) : (
+            <ReactPlayer
+              url={memory.mediaUrl}
+              playing={false}
+              controls={true}
+              muted={!isDetailView}
+              width="100%"
+              height="100%"
+              playsinline={true}
+              config={{
+                file: {
+                  attributes: {
+                    playsInline: true,
+                    controlsList: 'nodownload',
+                    preload: 'metadata'
+                  }
+                }
+              }}
+              style={{ objectFit: isDetailView ? 'contain' : 'cover', backgroundColor: '#fdf6e3' }}
+            />
+          )
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-vintage-100">
             {isDetailView ? (
@@ -148,4 +192,4 @@ function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = fa
   );
 }
 
-export default MemoryCard; 
+export default MemoryCard;
