@@ -72,13 +72,21 @@ function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = fa
           />
         ) : memory.mediaType === 'video' ? (
           <video
-  src={memory.mediaUrl}
-  controls={isDetailView}
+  controls
   playsInline
+  muted={!isDetailView}
+  autoPlay={!isDetailView}
   loop={!isDetailView}
   preload="metadata"
   className={`w-full h-full ${isDetailView ? 'object-contain' : 'object-cover'} bg-vintage-100`}
-/>
+>
+  <source
+    src={`https://res.cloudinary.com/ddgg6kmod/video/upload/f_mp4,q_auto:eco/legacy-memories/rko7eapr6al76utw8f5o.mp4`}
+    type="video/mp4"
+  />
+  Your browser does not support the video tag.
+</video>
+
 
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-vintage-100">
