@@ -71,18 +71,17 @@ function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = fa
             className={`w-full h-full ${isDetailView ? 'object-contain' : 'object-cover'} bg-vintage-100`}
           />
         ) : memory.mediaType === 'video' ? (
-         <video
-  controls
+        <video
+  src={memory.mediaUrl}
+  controls={isDetailView}
   playsInline
+  muted={!isDetailView}
+  autoPlay={!isDetailView}
+  loop={!isDetailView}
   preload="metadata"
-  muted
-  autoPlay
-  loop
-  style={{ width: '100%', height: 'auto' }}
->
-  <source src={memory.mediaUrl} type="video/mp4" />
-  Your browser does not support the video tag.
-</video>
+  className={`w-full h-full ${isDetailView ? 'object-contain' : 'object-cover'} bg-vintage-100`}
+/>
+
 
 
 
