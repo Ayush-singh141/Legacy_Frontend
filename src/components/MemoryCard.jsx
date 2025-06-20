@@ -71,17 +71,44 @@ function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = fa
             className={`w-full h-full ${isDetailView ? 'object-contain' : 'object-cover'} bg-vintage-100`}
           />
         ) : memory.mediaType === 'video' ? (
+        isDetailView ? (
         <video
-  src={memory.mediaUrl}
-  controls={isDetailView}
-  playsInline
-  muted={!isDetailView}
-  autoPlay={!isDetailView}
-  loop={!isDetailView}
-  preload="metadata"
-  className={`w-full h-full ${isDetailView ? 'object-contain' : 'object-cover'} bg-vintage-100`}
-/>
-
+            src={memory.mediaUrl}
+            controls={true} // Always controls in detail view
+            playsInline
+            muted={false} // User expects sound in detail view
+            autoPlay={true} // Can try autoplay in detail if user navigated to it
+            loop={false}
+            preload="metadata"
+            className={`w-full h-full object-contain bg-vintage-100`}
+        />
+    ) : (
+        // For the non-detail view (the grid/feed)
+        <div className="relative w-full h-full flex items-center justify-center bg-vintage-100">
+            {/* Cloudinary can generate a thumbnail image from the video.
+                Assuming memory.mediaUrl is a Cloudinary URL:
+                Append a transformation like /upload/f_jpg,vc_auto/ or /upload/f_jpg,co_rgb:000000,e_screen,r_max/
+                to get a thumbnail. You might need to adjust the exact transformation
+                based on your Cloudinary setup and desired thumbnail.
+                For simplicity, you can just use the video tag with controls here,
+                but a static thumbnail is better for performance.
+            */}
+            <video
+                src={memory.mediaUrl}
+                controls={true} // Show controls so user can play
+                playsInline
+                muted={true} // Keep muted for initial grid view display
+                autoPlay={false} // Definitely turn off autoplay for grid view on mobile
+                loop={false}
+                preload="metadata" // Or "none" to save bandwidth
+                className={`w-full h-full object-cover`}
+            />
+            {/* You could also add a custom play icon overlay here instead of relying solely on browser controls */}
+            {/* <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
+                <PlayCircleIcon className="h-20 w-20 text-white opacity-80" />
+            </div> */}
+        </div>
+    )
 
 
 
