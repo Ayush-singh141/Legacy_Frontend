@@ -75,9 +75,8 @@ function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = fa
   src={memory.mediaUrl}
   controls={isDetailView} // Controls are enabled only in detail view
   playsInline             // Good for iOS, but placement matters
-  muted={!isDetailView}   // Muted when not in detail view
-  autoPlay={!isDetailView} // Autoplay when not in detail view (likely the issue)
-  loop={!isDetailView}    // Loop when not in detail view
+  muted={true}   // Muted when not in detail view
+  autoPlay={false} // Autoplay when not in detail view (likely the issue)
   preload="metadata"      // Preload metadata
   className={`w-full h-full ${isDetailView ? 'object-contain' : 'object-cover'} bg-vintage-100`}
 />
