@@ -8,9 +8,16 @@ const VideoPlayer = ({mediaId}) => {
             return; // Cloudinary already loaded
         }
       cloudinaryRef.current = window.cloudinary;
-      cloudinaryRef.current.videoPlayer(videoRef.current,{
-        cloud_name:'ddgg6kmod'
+      const player = cloudinaryRef.current.videoPlayer(videoRef.current,{
+        cloud_name:'ddgg6kmod',
+        playsinline: true,
+        preload: 'auto',
+        fluid: true
       })
+       player.source(mediaId, {
+        sourceTypes: ['mp4', 'webm', 'ogv'] // Let it choose best format
+      });
+
     }, [mediaId])
     
   return (
