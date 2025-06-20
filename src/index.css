@@ -1,0 +1,49 @@
+@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;500;600;700&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  body {
+    @apply bg-vintage-50 text-vintage-900;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply px-4 py-2 bg-sepia-500 text-white rounded-lg hover:bg-sepia-600 transition-colors duration-200;
+  }
+  
+  .btn-secondary {
+    @apply px-4 py-2 bg-vintage-200 text-vintage-900 rounded-lg hover:bg-vintage-300 transition-colors duration-200;
+  }
+
+  .input-field {
+    @apply w-full px-4 py-2 border border-vintage-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-sepia-500 bg-white;
+  }
+
+  .card {
+    @apply bg-white p-6 rounded-xl shadow-lg border border-vintage-100;
+  }
+
+  .vintage-title {
+    @apply font-vintage text-3xl font-bold text-vintage-900;
+  }
+
+  .handwritten-text {
+    @apply font-handwritten text-2xl text-vintage-800;
+  }
+}
+/* Hide scrollbar for all elements but keep scroll working */
+::-webkit-scrollbar {
+  width: 0px;
+  background: transparent; /* Optional */
+}
+
+html, body {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;     /* Firefox */
+  overflow-y: scroll;
+}

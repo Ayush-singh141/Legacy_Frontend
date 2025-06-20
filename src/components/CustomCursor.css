@@ -1,0 +1,15 @@
+/* global.css or CustomCursor.module.css */
+.custom-cursor {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 20px;
+  height: 20px;
+  border: 2px solid #000;
+  border-radius: 50%;
+  pointer-events: none;
+  z-index: 9999;
+  background-color: rgba(0, 0, 0, 0.1);
+  mix-blend-mode: difference; /* optional, for visual pop */
+  transition: background-color 0.2s ease;
+}
