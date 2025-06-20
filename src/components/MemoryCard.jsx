@@ -72,10 +72,16 @@ function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = fa
           />
         ) : memory.mediaType === 'video' ? (
           <video
-            src={memory.mediaUrl}
-            controls={isDetailView}
-            className={`w-full h-full ${isDetailView ? 'object-contain' : 'object-cover'} bg-vintage-100`}
-          />
+  src={memory.mediaUrl}
+  controls={isDetailView}
+  playsInline
+  muted={!isDetailView} // Avoid autoplay restrictions
+  autoPlay={!isDetailView} // Optional if you're showing preview
+  loop={!isDetailView}
+  preload="metadata"
+  className={`w-full h-full ${isDetailView ? 'object-contain' : 'object-cover'} bg-vintage-100`}
+/>
+
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-vintage-100">
             {isDetailView ? (
