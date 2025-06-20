@@ -75,8 +75,6 @@ function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = fa
   src={memory.mediaUrl}
   controls={isDetailView}
   playsInline
-  muted={!isDetailView} // Avoid autoplay restrictions
-  autoPlay={!isDetailView} // Optional if you're showing preview
   loop={!isDetailView}
   preload="metadata"
   className={`w-full h-full ${isDetailView ? 'object-contain' : 'object-cover'} bg-vintage-100`}
