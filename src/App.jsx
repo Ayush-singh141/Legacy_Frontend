@@ -42,13 +42,7 @@ function App() {
                 <Home />
               </AuthenticatedRoute>
             } />
-            <Route path="/oauth/callback" element={
-              <NostalgicPageTransition>
-              <AuthenticatedRoute>
-                <GoogleCallback />
-              </AuthenticatedRoute>
-              </NostalgicPageTransition>
-            } />
+            
             <Route path='/otp' element={
               <NostalgicPageTransition>
               <AuthenticatedRoute>
