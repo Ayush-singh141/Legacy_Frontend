@@ -31,7 +31,7 @@ export function AuthProvider({ children }) {
       return true;
     } catch (error) {
       console.error("Token validation failed:", error);
-      localStorage.removeItem("token");
+      //localStorage.removeItem("token");
       setToken(null);
       setUser(null);
       return false;
