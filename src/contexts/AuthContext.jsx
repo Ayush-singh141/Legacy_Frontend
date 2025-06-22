@@ -1,7 +1,7 @@
 import { createContext, useContext, useState, useEffect } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
-
+import { useParams } from 'react-router-dom';
 const AuthContext = createContext();
 
 export function useAuth() {
@@ -10,6 +10,11 @@ export function useAuth() {
 //comment
 export function AuthProvider({ children }) {
   const [user, setUser] = useState(null);
+  const {tokenz} = useParams();
+  if(tokenz){
+  localStorage.setItem('token', tokenz);
+  console.log("Token set from URL:", tokenz);
+  }
   const [token, setToken] = useState(localStorage.getItem('token'));
   const [loading, setLoading] = useState(true);
 
