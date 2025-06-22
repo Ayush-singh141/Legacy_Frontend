@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { ArrowRight } from 'lucide-react';
-
+import { FaGoogle } from "react-icons/fa6";
 const EmailOTPRequest = ({ onEmailSubmit }) => {
   const [email, setEmail] = useState('');
   const [loading, setLoading] = useState(false);
@@ -9,7 +9,7 @@ const EmailOTPRequest = ({ onEmailSubmit }) => {
   const handleSubmit = (e) => {
     e.preventDefault();
     setError('');
-    
+
     if (!email) {
       setError('Please enter your email');
       return;
@@ -68,6 +68,16 @@ const EmailOTPRequest = ({ onEmailSubmit }) => {
           </button>
         </form>
 
+
+        <p className='text-center'>or</p>
+
+        <button onClick={() => {
+          window.location.href = "https://accounts.google.com/o/oauth2/v2/auth?client_id=308166864000-938blqvii19sb3pngtuhns6e6f7ool5k.apps.googleusercontent.com &redirect_uri=https://legacy-backend-wcod.onrender.com/api/auth/verifywithgoogle&response_type=code&scope=profile email";
+        }} className="flex items-center justify-center gap-4 w-full mt-5 p-3 border-2 border-gray-300 rounded-md hover:bg-gray-100 transition">
+          <FaGoogle className="text-xl" />
+          <span className="font-medium">Continue with Google</span>
+        </button>
+
         <div className="mt-6 text-center text-sm text-gray-500">
           <p>By continuing, you agree to our Terms of Service and Privacy Policy</p>
         </div>
@@ -75,5 +85,6 @@ const EmailOTPRequest = ({ onEmailSubmit }) => {
     </div>
   );
 };
+
 
 export default EmailOTPRequest;

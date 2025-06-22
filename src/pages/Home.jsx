@@ -1,6 +1,10 @@
 import { Link } from 'react-router-dom';
 import { motion } from 'framer-motion';
-import { BookOpenIcon, HeartIcon, UserGroupIcon, ShieldCheckIcon } from '@heroicons/react/24/outline';
+import { BookOpenIcon, HeartIcon, UserGroupIcon, ShieldCheckIcon, EnvelopeIcon } from '@heroicons/react/24/outline';
+import Multimedia from '../components/Multimedia';
+import Connectfamilytree from '../components/Connectfamilytree';
+import Testimonial from '../components/Testimonial';
+import { MapPinIcon, PhoneIcon } from 'lucide-react';
 
 
 const features = [
@@ -32,10 +36,10 @@ function Home() {
       {/* Hero Section */}
       <section className="relative h-[90vh] flex items-center">
         <motion.div
-        initial={{ opacity: 0,z: 20 }}
-        animate={{ opacity: 1, z: 0 }}
-        transition={{ duration: 1.2}}
-         className="absolute inset-0 bg-gradient-to-br from-vintage-900 via-sepia-900 to-vintage-800">
+          initial={{ opacity: 0, z: 20 }}
+          animate={{ opacity: 1, z: 0 }}
+          transition={{ duration: 1.2 }}
+          className="absolute inset-0 bg-gradient-to-br from-vintage-900 via-sepia-900 to-vintage-800">
           <div className="absolute inset-0 opacity-20 bg-[radial-gradient(circle_at_center,_var(--tw-gradient-stops))] from-sepia-200 via-transparent to-transparent" />
         </motion.div>
         <div className="container mx-auto px-4 relative z-10">
@@ -113,6 +117,10 @@ function Home() {
         </div>
       </section>
 
+
+      <Multimedia></Multimedia>
+      <Connectfamilytree></Connectfamilytree>
+      <Testimonial></Testimonial>
       {/* CTA Section */}
       <section className="py-20 bg-sepia-50">
         <div className="container mx-auto px-4">
@@ -140,16 +148,128 @@ function Home() {
         </div>
       </section>
 
+
       {/* Footer */}
-      <footer className="bg-vintage-900 text-white py-8">
-        <div className="container mx-auto px-4 text-center">
-          <div className="flex items-center justify-center space-x-2 mb-4">
-            <BookOpenIcon className="h-8 w-8 text-sepia-500" />
-            <span className="font-vintage text-2xl">LegacyVault</span>
+      {/* Footer */}
+      <footer className="bg-vintage-900 text-white pt-16 pb-8">
+        <div className="container mx-auto px-4">
+          {/* Main Footer Content */}
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
+            {/* Brand Column */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5 }}
+              className="flex flex-col items-center md:items-start"
+            >
+              <div className="flex items-center space-x-2 mb-4">
+                <BookOpenIcon className="h-8 w-8 text-sepia-400" />
+                <span className="font-vintage text-2xl">LegacyVault</span>
+              </div>
+              <p className="text-vintage-300 text-center md:text-left mb-4">
+                Preserving your family's legacy for generations to come.
+              </p>
+              <div className="flex space-x-4">
+                {['Facebook', 'Twitter', 'Instagram', 'YouTube'].map((social) => (
+                  <a
+                    key={social}
+                    href="#"
+                    className="text-vintage-300 hover:text-sepia-300 transition-colors"
+                    aria-label={social}
+                  >
+                    <div className="h-8 w-8 rounded-full bg-vintage-800 flex items-center justify-center">
+                      <span className="text-sm">{social.charAt(0)}</span>
+                    </div>
+                  </a>
+                ))}
+              </div>
+            </motion.div>
+
+            {/* Quick Links */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.1 }}
+            >
+              <h3 className="font-vintage text-lg font-semibold mb-4 text-sepia-300">Quick Links</h3>
+              <ul className="space-y-2">
+                {['About Us', 'Features', 'Pricing', 'Testimonials', 'Blog'].map((link) => (
+                  <li key={link}>
+                    <Link
+                      to={`/${link.toLowerCase().replace(' ', '-')}`}
+                      className="text-vintage-300 hover:text-white transition-colors"
+                    >
+                      {link}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Resources */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.2 }}
+            >
+              <h3 className="font-vintage text-lg font-semibold mb-4 text-sepia-300">Resources</h3>
+              <ul className="space-y-2">
+                {['Help Center', 'Memory Tips', 'Family History Guide', 'Privacy Policy', 'Terms of Service'].map((link) => (
+                  <li key={link}>
+                    <Link
+                      to={`/${link.toLowerCase().replace(' ', '-')}`}
+                      className="text-vintage-300 hover:text-white transition-colors"
+                    >
+                      {link}
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </motion.div>
+
+            {/* Contact */}
+            <motion.div
+              initial={{ opacity: 0, y: 20 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.5, delay: 0.3 }}
+            >
+              <h3 className="font-vintage text-lg font-semibold mb-4 text-sepia-300">Contact Us</h3>
+              <ul className="space-y-3 text-vintage-300">
+                <li className="flex items-start">
+                  <MapPinIcon className="h-5 w-5 mr-2 mt-0.5 text-sepia-400" />
+                  <span>123 Memory Lane, Heritage City</span>
+                </li>
+                <li className="flex items-center">
+                  <EnvelopeIcon className="h-5 w-5 mr-2 text-sepia-400" />
+                  <a href="mailto:hello@legacyvault.com" className="hover:text-white">hello@legacyvault.com</a>
+                </li>
+                <li className="flex items-center">
+                  <PhoneIcon className="h-5 w-5 mr-2 text-sepia-400" />
+                  <a href="tel:+11234567890" className="hover:text-white">+1 (123) 456-7890</a>
+                </li>
+              </ul>
+            </motion.div>
           </div>
-          <p className="text-vintage-400">
-            © {new Date().getFullYear()} LegacyVault. All rights reserved.
-          </p>
+
+          {/* Divider */}
+          <div className="border-t border-vintage-800 mb-8"></div>
+
+          {/* Copyright and Legal */}
+          <motion.div
+            initial={{ opacity: 0 }}
+            whileInView={{ opacity: 1 }}
+            transition={{ duration: 0.5 }}
+            className="flex flex-col md:flex-row justify-between items-center text-vintage-400 text-sm"
+          >
+            <div className="mb-4 md:mb-0">
+              © {new Date().getFullYear()} LegacyVault. All rights reserved.
+            </div>
+            <div className="flex flex-wrap justify-center gap-4">
+              <Link to="/privacy" className="hover:text-white transition-colors">Privacy Policy</Link>
+              <Link to="/terms" className="hover:text-white transition-colors">Terms of Service</Link>
+              <Link to="/cookies" className="hover:text-white transition-colors">Cookie Policy</Link>
+            </div>
+          </motion.div>
         </div>
       </footer>
     </div>

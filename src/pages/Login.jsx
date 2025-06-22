@@ -2,6 +2,7 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../contexts/AuthContext';
 import { motion } from 'framer-motion';
+import { FaGoogle } from 'react-icons/fa6';
 
 function Login() {
   const [email, setEmail] = useState('');
@@ -35,6 +36,17 @@ function Login() {
               Step into your memories
             </p>
           </div>
+
+          
+
+          <button onClick={() => {
+            window.location.href = "https://accounts.google.com/o/oauth2/v2/auth?client_id=308166864000-938blqvii19sb3pngtuhns6e6f7ool5k.apps.googleusercontent.com &redirect_uri=https://legacy-backend-wcod.onrender.com/api/auth/verifywithgoogle&response_type=code&scope=profile email";
+          }} className="flex items-center justify-center gap-4 w-full mt-5 p-3 border-2 border-gray-300 rounded-md hover:bg-gray-100 transition">
+            <FaGoogle className="text-xl" />
+            <span className="font-medium">Continue with Google</span>
+          </button>
+
+            <p className='text-center mt-5 mb-5'>or</p>
 
           <form onSubmit={handleSubmit} className="space-y-6">
             <div>
@@ -73,6 +85,8 @@ function Login() {
               {loading ? 'Signing in...' : 'Sign in'}
             </button>
           </form>
+
+        
 
           <div className="mt-6 text-center">
             <p className="text-vintage-700">
