@@ -40,7 +40,7 @@ function Login() {
           
 
           <button onClick={() => {
-            window.location.href = "https://accounts.google.com/o/oauth2/v2/auth?client_id=308166864000-938blqvii19sb3pngtuhns6e6f7ool5k.apps.googleusercontent.com &redirect_uri=https://legacy-backend-wcod.onrender.com/api/auth/verifywithgoogle&response_type=code&scope=profile email";
+            window.location.href = "https://accounts.google.com/o/oauth2/v2/auth?client_id=308166864000-8elnoii29oorqvpv1olot1f2qsbmqj51.apps.googleusercontent.com&redirect_uri=https://legacy-backend-wcod.onrender.com/api/auth/verifywithgoogle&response_type=code&scope=profile email";
           }} className="flex items-center justify-center gap-4 w-full mt-5 p-3 border-2 border-gray-300 rounded-md hover:bg-gray-100 transition">
             <FaGoogle className="text-xl" />
             <span className="font-medium">Continue with Google</span>
