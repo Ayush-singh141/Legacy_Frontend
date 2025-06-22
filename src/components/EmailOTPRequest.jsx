@@ -29,7 +29,7 @@ const EmailOTPRequest = ({ onEmailSubmit }) => {
   };
 
   return (
-    <div className="flex flex-col items-center justify-center  p-4 mt-12">
+    <div className="flex flex-col items-center   p-4 mt-5 mb-5">
       <div className="w-full max-w-md bg-white rounded-xl shadow-md overflow-hidden p-8">
         <div className="text-center mb-8">
           <h1 className="text-2xl font-bold text-vintage-900 mb-2">Enter your email for registration</h1>
