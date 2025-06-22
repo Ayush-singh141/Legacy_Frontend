@@ -31,35 +31,39 @@ export function AuthProvider({ children }) {
       return true;
     } catch (error) {
       console.error("Token validation failed:", error);
-      //localStorage.removeItem("token");
+      localStorage.removeItem("token");
       setToken(null);
       setUser(null);
       return false;
     }
   };
 
-  useEffect(() => {
-    const initializeAuth = async () => {
-      let tokenz = location.search.split("=")[1];
-      if (tokenz) {
-        localStorage.setItem("token", tokenz);
-        setToken(tokenz);
-      }
-      if (token) {
-        axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
-        try {
-          await validateToken(token);
-        } catch (error) {
-          console.error("Auth initialization failed:", error);
-        }
-      } else {
-        delete axios.defaults.headers.common["Authorization"];
-      }
-      setLoading(false);
-    };
+  // 1. Extract token from URL and save to state/storage
+useEffect(() => {
+  const tokenFromUrl = location.search.split("=")[1];
+  if (tokenFromUrl) {
+    localStorage.setItem("token", tokenFromUrl);
+    setToken(tokenFromUrl);
+    window.history.replaceState(null, null, location.pathname); // optional: clean URL
+  }
+}, [location.search]);
 
-    initializeAuth();
-  }, [token]);
+// 2. Validate token and fetch user
+useEffect(() => {
+  const initializeAuth = async () => {
+    if (token) {
+      axios.defaults.headers.common["Authorization"] = `Bearer ${token}`;
+      await validateToken(token);
+    } else {
+      delete axios.defaults.headers.common["Authorization"];
+      setUser(null);
+    }
+    setLoading(false);
+  };
+
+  initializeAuth();
+}, [token]);
+
 
   const register = async (name, email, password) => {
     try {
