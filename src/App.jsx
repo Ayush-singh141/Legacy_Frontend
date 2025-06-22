@@ -21,7 +21,7 @@ import { useLocation } from 'react-router-dom';
 import { ReactLenis, useLenis } from 'lenis/react'
 import CustomCursor from './components/CustomCursor';
 import OTPFlow from './pages/OTPFlow';
-import GoogleCallback from './components/GoogleCallback';
+
 function App() {
   const lenis = useLenis((lenis) => {})
   return (
