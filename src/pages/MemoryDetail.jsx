@@ -1,17 +1,17 @@
-import { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom';
-import axios from 'axios';
-import { toast } from 'react-toastify';
-import { 
-  ArrowLeftIcon, 
+import { useState, useEffect } from "react";
+import { useParams, useNavigate } from "react-router-dom";
+import axios from "axios";
+import { toast } from "react-toastify";
+import {
+  ArrowLeftIcon,
   BookOpenIcon,
   CalendarIcon,
   UserGroupIcon,
   HeartIcon,
-  TrashIcon
-} from '@heroicons/react/24/outline';
-import MemoryCard from '../components/MemoryCard';
-import { useAuth } from '../contexts/AuthContext';
+  TrashIcon,
+} from "@heroicons/react/24/outline";
+import MemoryCard from "../components/MemoryCard";
+import { useAuth } from "../contexts/AuthContext";
 
 const MemoryDetail = () => {
   const { memoryId } = useParams();
@@ -22,26 +22,41 @@ const MemoryDetail = () => {
   const [error, setError] = useState(null);
   const [likesCount, setLikesCount] = useState(0);
   const [hasLiked, setHasLiked] = useState(false);
-
+  const handleShare = async () => {
+    try {
+      await navigator.share({
+        title: `Memory: ${memory?.title || "Untitled"}`,
+        text: `Check out this memory: ${
+          memory?.description || "No description available"
+        }`,
+        url: window.location.href, // or any specific memory link
+      });
+    } catch (err) {
+      console.error("Error sharing:", err);
+    }
+  };
   useEffect(() => {
     const fetchMemory = async () => {
       try {
         setLoading(true);
         setError(null);
-        const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/memories/${memoryId}`, {
-          headers: {
-            Authorization: `Bearer ${token}`
+        const response = await axios.get(
+          `${import.meta.env.VITE_BACKEND_URL}/api/memories/${memoryId}`,
+          {
+            headers: {
+              Authorization: `Bearer ${token}`,
+            },
           }
-        });
+        );
         setMemory(response.data.memory);
         setLikesCount(response.data.memory.likes?.length || 0);
         setHasLiked(response.data.memory.likes?.includes(user?._id));
       } catch (error) {
-        console.error('Error fetching memory:', error);
-        setError(error.response?.data?.error || 'Failed to load memory');
-        toast.error(error.response?.data?.error || 'Failed to load memory');
+        console.error("Error fetching memory:", error);
+        setError(error.response?.data?.error || "Failed to load memory");
+        toast.error(error.response?.data?.error || "Failed to load memory");
         if (error.response?.status === 404) {
-          navigate('/dashboard');
+          navigate("/dashboard");
         }
       } finally {
         setLoading(false);
@@ -64,38 +79,51 @@ const MemoryDetail = () => {
         {},
         {
           headers: {
-            Authorization: `Bearer ${token}`
-          }
+            Authorization: `Bearer ${token}`,
+          },
         }
       );
 
       if (response.data.success) {
         setLikesCount(response.data.likesCount);
         setHasLiked(response.data.liked);
-        toast.success(response.data.liked ? 'Memory liked!' : 'Memory unliked');
+        toast.success(response.data.liked ? "Memory liked!" : "Memory unliked");
       }
     } catch (error) {
-      console.error('Error toggling like:', error);
-      toast.error(error.response?.data?.error || 'Failed to toggle like');
+      console.error("Error toggling like:", error);
+      toast.error(error.response?.data?.error || "Failed to toggle like");
     }
-  };  const handleDeleteRequest = async () => {
+  };
+  const handleDeleteRequest = async () => {
     try {
-      if (!window.confirm('Are you sure you want to request deletion of this memory? This will initiate a voting process with all vault members.')) {
+      if (
+        !window.confirm(
+          "Are you sure you want to request deletion of this memory? This will initiate a voting process with all vault members."
+        )
+      ) {
         return;
       }
 
-      const response = await axios.delete(`${import.meta.env.VITE_BACKEND_URL}/api/memories/${memoryId}`, {
-        headers: {
-          Authorization: `Bearer ${token}`
+      const response = await axios.delete(
+        `${import.meta.env.VITE_BACKEND_URL}/api/memories/${memoryId}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
         }
-      });
+      );
 
-      toast.success('Deletion vote initiated successfully. All vault members will be notified to vote.');
+      toast.success(
+        "Deletion vote initiated successfully. All vault members will be notified to vote."
+      );
       navigate(`/vote/${response.data.voteId}`);
     } catch (error) {
-      const errorMessage = error.response?.data?.message || error.response?.data?.error || 'Failed to initiate deletion vote';
+      const errorMessage =
+        error.response?.data?.message ||
+        error.response?.data?.error ||
+        "Failed to initiate deletion vote";
       toast.error(errorMessage);
-      console.error('Error initiating deletion vote:', error);
+      console.error("Error initiating deletion vote:", error);
     }
   };
 
@@ -128,15 +156,43 @@ const MemoryDetail = () => {
             Back to Vault
           </button>
           <div className="flex items-center space-x-4">
+            <button
+              onClick={handleShare}
+              className="flex items-center text-vintage-600 hover:text-vintage-800"
+            >
+              {" "}
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                fill="none"
+                viewBox="0 0 24 24"
+                strokeWidth={1.5}
+                stroke="currentColor"
+                className="size-5"
+              >
+                <path
+                  strokeLinecap="round"
+                  strokeLinejoin="round"
+                  d="M7.217 10.907a2.25 2.25 0 1 0 0 2.186m0-2.186c.18.324.283.696.283 1.093s-.103.77-.283 1.093m0-2.186 9.566-5.314m-9.566 7.5 9.566 5.314m0 0a2.25 2.25 0 1 0 3.935 2.186 2.25 2.25 0 0 0-3.935-2.186Zm0-12.814a2.25 2.25 0 1 0 3.933-2.185 2.25 2.25 0 0 0-3.933 2.185Z"
+                />
+              </svg>
+            </button>
             <span className="flex items-center text-sm text-vintage-600 sm:text-base">
               <CalendarIcon className="w-4 h-4 mr-1 sm:w-5 sm:h-5" />
               {new Date(memory?.createdAt).toLocaleDateString()}
             </span>
-            <button 
+            <button
               onClick={handleLike}
-              className={`flex items-center ${hasLiked ? 'text-red-500' : 'text-vintage-600 hover:text-red-500'} transition-colors duration-200`}
+              className={`flex items-center ${
+                hasLiked
+                  ? "text-red-500"
+                  : "text-vintage-600 hover:text-red-500"
+              } transition-colors duration-200`}
             >
-              <HeartIcon className={`w-4 h-4 sm:w-5 sm:h-5 mr-1 ${hasLiked ? 'fill-current' : ''} transition-all duration-200`} />
+              <HeartIcon
+                className={`w-4 h-4 sm:w-5 sm:h-5 mr-1 ${
+                  hasLiked ? "fill-current" : ""
+                } transition-all duration-200`}
+              />
               {likesCount}
             </button>
           </div>
@@ -158,7 +214,9 @@ const MemoryDetail = () => {
                 </div>
                 <div className="flex items-center text-sm text-vintage-600 sm:text-base whitespace-nowrap">
                   <UserGroupIcon className="w-4 h-4 mr-2 sm:w-5 sm:h-5" />
-                  <span>Shared with {memory.vault.members?.length || 0} members</span>
+                  <span>
+                    Shared with {memory.vault.members?.length || 0} members
+                  </span>
                 </div>
               </div>
               <p className="text-sm break-words text-vintage-600 sm:text-base">
@@ -174,7 +232,8 @@ const MemoryDetail = () => {
             {/* Memory Stats */}
             <div className="mt-6 text-center sm:mt-8 text-vintage-600">
               <p className="px-2 text-lg sm:text-xl handwritten-text">
-                This memory was captured on {" "+new Date(memory.createdAt).toLocaleDateString()+" "} 
+                This memory was captured on{" "}
+                {" " + new Date(memory.createdAt).toLocaleDateString() + " "}
                 by {memory.uploadedBy?.name}
               </p>
             </div>

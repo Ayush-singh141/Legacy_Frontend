@@ -5,19 +5,107 @@ import {
   CheckCircleIcon,
   XCircleIcon,
   ClockIcon,
-  TrashIcon
+  TrashIcon,
+  PlayIcon,
+  PauseIcon,
+  SpeakerWaveIcon,
+  SpeakerXMarkIcon,
+  ArrowPathIcon
 } from '@heroicons/react/24/outline';
 import { useNavigate } from 'react-router-dom';
 import ReactPlayer from 'react-player'
 import VideoPlayer from './VideoPlayer';
+import { useState, useRef, useEffect } from 'react';
+
 function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = false, onDelete }) {
   const navigate = useNavigate();
+  const audioRef = useRef(null);
+  const [isPlaying, setIsPlaying] = useState(false);
+  const [volume, setVolume] = useState(0.7);
+  const [isMuted, setIsMuted] = useState(false);
+  const [progress, setProgress] = useState(0);
+  const [duration, setDuration] = useState(0);
+
   console.log('MemoryCard Props:', { memory, isAdmin, isDetailView });
 
   const handleClick = () => {
     if (!isDetailView) {
       navigate(`/memories/${memory._id}`);
     }
+  };
+
+  useEffect(() => {
+    const audio = audioRef.current;
+    if (!audio) return;
+
+    const updateProgress = () => {
+      setProgress((audio.currentTime / audio.duration) * 100);
+    };
+
+    audio.addEventListener('timeupdate', updateProgress);
+    audio.addEventListener('loadedmetadata', () => {
+      setDuration(audio.duration);
+    });
+    audio.addEventListener('ended', () => {
+      setIsPlaying(false);
+      setProgress(0);
+    });
+
+    return () => {
+      audio.removeEventListener('timeupdate', updateProgress);
+      audio.removeEventListener('loadedmetadata', () => {});
+      audio.removeEventListener('ended', () => {});
+    };
+  }, []);
+
+  const togglePlayPause = () => {
+    if (isPlaying) {
+      audioRef.current.pause();
+    } else {
+      audioRef.current.play();
+    }
+    setIsPlaying(!isPlaying);
+  };
+
+  const handleVolumeChange = (e) => {
+    const newVolume = e.target.value;
+    setVolume(newVolume);
+    audioRef.current.volume = newVolume;
+    if (newVolume == 0) {
+      setIsMuted(true);
+    } else {
+      setIsMuted(false);
+    }
+  };
+
+  const toggleMute = () => {
+    if (isMuted) {
+      audioRef.current.volume = volume;
+    } else {
+      audioRef.current.volume = 0;
+    }
+    setIsMuted(!isMuted);
+  };
+
+  const handleSeek = (e) => {
+    const seekTime = (e.target.value / 100) * duration;
+    audioRef.current.currentTime = seekTime;
+    setProgress(e.target.value);
+  };
+
+  const handleReplay = () => {
+    audioRef.current.currentTime = 0;
+    setProgress(0);
+    if (!isPlaying) {
+      audioRef.current.play();
+      setIsPlaying(true);
+    }
+  };
+
+  const formatTime = (seconds) => {
+    const mins = Math.floor(seconds / 60);
+    const secs = Math.floor(seconds % 60);
+    return `${mins}:${secs < 10 ? '0' : ''}${secs}`;
   };
 
   const getMediaIcon = (type) => {
@@ -61,13 +149,9 @@ function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = fa
 
   function getCloudinaryMp4Url(url) {
     if (!url) return '';
-    // If already ends with .mp4 and has vc_h264,ac_aac, return as is
     if (url.endsWith('.mp4') && url.includes('/vc_h264,ac_aac/')) return url;
-    // If Cloudinary URL, force /vc_h264,ac_aac/ and .mp4 delivery
     if (url.includes('cloudinary')) {
-      // Insert /vc_h264,ac_aac/ after /upload if not present
       let newUrl = url.replace(/\/upload(\/)?/, '/upload/vc_h264,ac_aac/');
-      // Ensure .mp4 extension
       if (!newUrl.endsWith('.mp4')) newUrl += '.mp4';
       return newUrl;
     }
@@ -88,11 +172,95 @@ function MemoryCard({ memory, className = '', isDetailView = false, isAdmin = fa
           />
         ) : memory.mediaType === 'video' ? (
           <VideoPlayer mediaId={memory.publicId}/>
-
         ) : (
           <div className="w-full h-full flex items-center justify-center bg-vintage-100">
             {isDetailView ? (
-              <audio src={memory.mediaUrl} controls className="w-full max-w-md px-4" />
+              <div className="w-full max-w-md px-4">
+                <audio 
+                  src={memory.mediaUrl} 
+                  ref={audioRef}
+                  className="hidden"
+                />
+                <div className="flex flex-col space-y-4 w-full">
+                  {/* Audio Title */}
+                  <div className="text-center font-medium text-vintage-900">
+                    {memory.title}
+                  </div>
+                  
+                  {/* Progress Bar */}
+                  <div className="w-full">
+                    <input
+                      type="range"
+                      min="0"
+                      max="100"
+                      value={progress}
+                      onChange={handleSeek}
+                      className="w-full h-2 bg-vintage-300 rounded-lg appearance-none cursor-pointer"
+                    />
+                    <div className="flex justify-between text-xs text-vintage-500 mt-1">
+                      <span>{formatTime((progress / 100) * duration)}</span>
+                      <span>{formatTime(duration)}</span>
+                    </div>
+                  </div>
+                  
+                  {/* Controls */}
+                  <div className="flex items-center justify-between">
+                    <div className="flex items-center space-x-4">
+                      {/* Play/Pause */}
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          togglePlayPause();
+                        }}
+                        className="p-2 rounded-full hover:bg-vintage-200"
+                      >
+                        {isPlaying ? (
+                          <PauseIcon className="h-6 w-6 text-vintage-700" />
+                        ) : (
+                          <PlayIcon className="h-6 w-6 text-vintage-700" />
+                        )}
+                      </button>
+                      
+                      {/* Replay */}
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          handleReplay();
+                        }}
+                        className="p-2 rounded-full hover:bg-vintage-200"
+                      >
+                        <ArrowPathIcon className="h-5 w-5 text-vintage-700" />
+                      </button>
+                    </div>
+                    
+                    {/* Volume Control */}
+                    <div className="flex items-center space-x-2">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          toggleMute();
+                        }}
+                        className="p-1 rounded-full hover:bg-vintage-200"
+                      >
+                        {isMuted ? (
+                          <SpeakerXMarkIcon className="h-5 w-5 text-vintage-700" />
+                        ) : (
+                          <SpeakerWaveIcon className="h-5 w-5 text-vintage-700" />
+                        )}
+                      </button>
+                      <input
+                        type="range"
+                        min="0"
+                        max="1"
+                        step="0.01"
+                        value={isMuted ? 0 : volume}
+                        onChange={handleVolumeChange}
+                        className="w-20 h-2 bg-vintage-300 rounded-lg appearance-none cursor-pointer"
+                      />
+                    </div>
+                  </div>
+                </div>
+              </div>
             ) : (
               getMediaIcon(memory.mediaType)
             )}

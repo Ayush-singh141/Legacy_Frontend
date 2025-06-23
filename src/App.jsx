@@ -21,6 +21,7 @@ import { useLocation } from 'react-router-dom';
 import { ReactLenis, useLenis } from 'lenis/react'
 import CustomCursor from './components/CustomCursor';
 import OTPFlow from './pages/OTPFlow';
+import LegacyChatbot from './pages/LegacyChatbot';
 
 function App() {
   const lenis = useLenis((lenis) => {})
@@ -64,7 +65,7 @@ function App() {
               </AuthenticatedRoute>
               </NostalgicPageTransition>
             } />
-
+            
             {/* Protected routes */}
             <Route path="/dashboard" element={
               <NostalgicPageTransition>
@@ -73,6 +74,16 @@ function App() {
               </PrivateRoute>
               </NostalgicPageTransition>  
             } />
+            <Route
+             path="/legacybot"
+             element={
+              <NostalgicPageTransition>
+              <PrivateRoute>
+              <LegacyChatbot/>
+              </PrivateRoute>
+              </NostalgicPageTransition>
+             }
+             />
             <Route path="/profile" element={
               <NostalgicPageTransition>
               <PrivateRoute>
