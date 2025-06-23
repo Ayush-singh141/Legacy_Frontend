@@ -84,12 +84,12 @@ function VaultDetail() {
   useEffect(() => {
     if (!lenis) return;
 
-    if (uploadModalOpen) {
+    if (uploadModalOpen || inviteModalOpen) {
       lenis.stop();
     } else {
       lenis.start();
     }
-  }, [uploadModalOpen]);
+  }, [uploadModalOpen , inviteModalOpen]);
 
   const handleUpload = async (e) => {
     e.preventDefault();
@@ -785,8 +785,8 @@ function VaultDetail() {
           )}
           {/* Invite Modal */}
           {inviteModalOpen && (
-            <div className="fixed inset-0 bg-black/50 flex items-center justify-center p-4 z-50">
-              <div className="bg-white rounded-xl p-4 sm:p-6 w-full max-w-md">
+            <div className="fixed inset-0 bg-black/50 flex justify-center p-4 z-50">
+              <div className="bg-white rounded-xl p-4 sm:p-6 w-full h-[45vh] max-w-md">
                 <h2 className="vintage-title text-xl sm:text-2xl mb-4">
                   Invite Member
                 </h2>
