@@ -36,26 +36,20 @@ const LegacyChatbot = () => {
         'image of', 'picture of', 'photo of'
     ];
 
-    // Improved auto-scroll to bottom of chat
+    // Auto-scroll to bottom of chat
     useEffect(() => {
         scrollToBottom();
     }, [messages]);
 
     const scrollToBottom = () => {
-        if (messagesEndRef.current) {
-            messagesEndRef.current.scrollIntoView({
-                behavior: 'smooth',
-                block: 'nearest',
-                inline: 'start'
-            });
-        }
+        messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
 
     // Generate description using Gemini API
     const generateDescription = async (prompt) => {
         try {
             const response = await axios.post(TEXT_API, {
-                mess: `Generate a concise, engaging description for an image based on: "${prompt}"`
+                mess : `Generate a concise, engaging description for an image based on: "${prompt}"`
             });
             return response.data?.message || `AI-generated image based on: "${prompt}"`;
         } catch (error) {
@@ -166,6 +160,7 @@ const LegacyChatbot = () => {
                     setMessages(prev => prev.filter(msg => !msg.isProcessing));
 
                     // Generate description using Gemini
+
                     const description = async () => {
                         const imgDescription = await generateDescription(`Generate a concise description for an image of: "${prompt}"`);
                         setDescription(imgDescription);
@@ -173,6 +168,7 @@ const LegacyChatbot = () => {
                     }
 
                     description();
+
 
                     const botMessage = {
                         text: "Here's the image I generated:",
@@ -241,139 +237,157 @@ const LegacyChatbot = () => {
     };
 
     return (
-        <div className="flex flex-col h-[89vh] bg-vintage-50">
-            {/* Chat container with fixed height */}
-            <div data-lenis-prevent className="flex-1 overflow-hidden text-xs">
-                <div
-                    ref={chatContainerRef}
-                    className="h-full overflow-y-auto p-4 space-y-4 container mx-auto max-w-4xl"
-                >
-                    {messages.length === 0 ? (
-                        <div className="flex flex-col items-center justify-center h-full text-center p-8">
-                            <div className="w-24 h-24 bg-vintage-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
-                                <svg className="w-12 h-12 text-vintage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                                </svg>
-                            </div>
-                            <h2 className="text-2xl font-medium text-vintage-800 mb-2">Welcome to Legacy AI</h2>
-                            <p className="text-vintage-600 max-w-md mb-8">Ask me anything or request an image generation. I'm here to assist with your creative and informational needs.</p>
-
-                            <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-lg">
-                                <button
-                                    onClick={() => setInput('Generate image of cyberpunk city at night with neon lights')}
-                                    className="p-4 bg-white hover:bg-vintage-50 rounded-xl text-left transition-all border border-vintage-200 hover:border-vintage-300 hover:shadow-sm"
-                                >
-                                    <div className="font-medium text-vintage-800">Cyberpunk city</div>
-                                    <div className="text-sm text-vintage-500 mt-1">Vibrant neon artwork</div>
-                                </button>
-                                <button
-                                    onClick={() => setInput('Explain quantum computing in simple terms')}
-                                    className="p-4 bg-white hover:bg-vintage-50 rounded-xl text-left transition-all border border-vintage-200 hover:border-vintage-300 hover:shadow-sm"
-                                >
-                                    <div className="font-medium text-vintage-800">Quantum computing</div>
-                                    <div className="text-sm text-vintage-500 mt-1">Technical concepts</div>
-                                </button>
-                            </div>
+        <div className="flex flex-col mt-5 h-screen bg-gradient-to-br from-gray-50 to-gray-100">
+            {/* Header */}
+            {/* <header className="bg-gradient-to-r from-indigo-700 to-purple-800 text-white p-4 shadow-lg">
+                <div className="container mx-auto flex items-center justify-between">
+                    <div className="flex items-center space-x-3">
+                        <div className="w-10 h-10 bg-white rounded-full flex items-center justify-center shadow-md">
+                            <svg className="w-6 h-6 text-indigo-700" fill="currentColor" viewBox="0 0 24 24">
+                                <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8 3.59 8 8-3.59 8-8 8zm-5-9h10v2H7z" />
+                            </svg>
                         </div>
-                    ) : (
-                        messages.map((msg, index) => (
-                            <div
-                                key={`${msg.timestamp}-${index}`}
-                                className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
-                            >
-                                <div
-                                    className={`max-w-3xl rounded-2xl p-4 relative ${msg.sender === 'user'
-                                        ? 'bg-vintage-600 text-white rounded-br-none shadow-md'
-                                        : 'bg-white text-vintage-800 rounded-bl-none shadow-sm border border-vintage-200'}`}
-                                >
-                                    <p className="whitespace-pre-wrap">{msg.text}</p>
-
-                                    {/* Image loading animation */}
-                                    {msg.isProcessing && imageLoadingProgress > 0 && (
-                                        <div className="mt-3 w-full bg-vintage-100 rounded-full h-2.5">
-                                            <div
-                                                className="bg-vintage-400 h-2.5 rounded-full transition-all duration-300 ease-out"
-                                                style={{ width: `${imageLoadingProgress}%` }}
-                                            ></div>
-                                        </div>
-                                    )}
-
-                                    {/* Image display */}
-                                    {msg.isImageResponse && generatedImage && (
-                                        <div className="mt-3 relative group">
-                                            <div className="relative overflow-hidden rounded-lg border border-vintage-200 shadow-sm">
-                                                <img
-                                                    src={generatedImage}
-                                                    alt="AI generated content"
-                                                    className="w-full h-auto max-h-96 object-contain transition-opacity duration-500"
-                                                    style={{ opacity: imageLoadingProgress === 100 ? 1 : 0 }}
-                                                    onLoad={() => setImageLoadingProgress(100)}
-                                                />
-                                                {imageLoadingProgress < 100 && (
-                                                    <div className="absolute inset-0 flex items-center justify-center bg-vintage-50">
-                                                        <div className="animate-pulse flex space-x-2">
-                                                            <div className="w-3 h-3 bg-vintage-300 rounded-full"></div>
-                                                            <div className="w-3 h-3 bg-vintage-400 rounded-full"></div>
-                                                            <div className="w-3 h-3 bg-vintage-500 rounded-full"></div>
-                                                        </div>
-                                                    </div>
-                                                )}
-                                            </div>
-                                            <div className="text-xs text-vintage-500 mt-1 flex justify-between items-center">
-                                                <span>AI-generated image</span>
-                                                <button
-                                                    onClick={() => {
-                                                        const link = document.createElement('a');
-                                                        link.href = generatedImage;
-                                                        link.download = `legacy-ai-${Date.now()}.png`;
-                                                        link.click();
-                                                    }}
-                                                    className="text-vintage-600 hover:text-vintage-700 text-xs"
-                                                >
-                                                    Download
-                                                </button>
-                                            </div>
-                                        </div>
-                                    )}
-
-                                    {/* Message timestamp */}
-                                    <div className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-vintage-100' : 'text-vintage-400'}`}>
-                                        {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
-                                    </div>
-                                </div>
-                            </div>
-                        ))
-                    )}
-
-                    {isLoading && !imageLoadingProgress && (
-                        <div className="flex justify-start">
-                            <div className="bg-white text-vintage-800 rounded-2xl rounded-bl-none p-4 max-w-xs shadow-sm border border-vintage-200">
-                                <div className="flex space-x-2 items-center">
-                                    <div className="w-2 h-2 rounded-full bg-vintage-400 animate-bounce"></div>
-                                    <div className="w-2 h-2 rounded-full bg-vintage-500 animate-bounce delay-100"></div>
-                                    <div className="w-2 h-2 rounded-full bg-vintage-600 animate-bounce delay-200"></div>
-                                    <span className="text-sm ml-2">Thinking...</span>
-                                </div>
-                            </div>
+                        <div>
+                            <h1 className="text-xl font-bold">Legacy AI</h1>
+                            <p className="text-xs opacity-90">Premium AI Assistant</p>
                         </div>
-                    )}
-
-                    <div ref={messagesEndRef} />
+                    </div>
+                    <div className="text-xs bg-white/20 px-3 py-1 rounded-full font-medium backdrop-blur-sm">
+                        {user?.email || "Guest"}
+                    </div>
                 </div>
+            </header> */}
+
+            {/* Chat container */}
+            <div
+                ref={chatContainerRef}
+                className="flex-1  overflow-y-auto p-4 space-y-4 container mx-auto max-w-4xl"
+            >
+                {messages.length === 0 ? (
+                    <div className="flex flex-col items-center justify-center h-full text-center p-8">
+                        <div className="w-24 h-24 bg-gradient-to-br from-indigo-100 to-purple-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
+                            <svg className="w-12 h-12 text-indigo-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
+                            </svg>
+                        </div>
+                        <h2 className="text-2xl font-medium text-gray-800 mb-2">Welcome to Legacy AI</h2>
+                        <p className="text-gray-600 max-w-md mb-8">Ask me anything or request an image generation. I'm here to assist with your creative and informational needs.</p>
+
+                        <div className="grid grid-cols-1 md:grid-cols-2 gap-3 w-full max-w-lg">
+                            <button
+                                onClick={() => setInput('Generate image of cyberpunk city at night with neon lights')}
+                                className="p-4 bg-white hover:bg-gray-50 rounded-xl text-left transition-all border border-gray-200 hover:border-indigo-200 hover:shadow-sm"
+                            >
+                                <div className="font-medium text-gray-800">Cyberpunk city</div>
+                                <div className="text-sm text-gray-500 mt-1">Vibrant neon artwork</div>
+                            </button>
+                            <button
+                                onClick={() => setInput('Explain quantum computing in simple terms')}
+                                className="p-4 bg-white hover:bg-gray-50 rounded-xl text-left transition-all border border-gray-200 hover:border-indigo-200 hover:shadow-sm"
+                            >
+                                <div className="font-medium text-gray-800">Quantum computing</div>
+                                <div className="text-sm text-gray-500 mt-1">Technical concepts</div>
+                            </button>
+                        </div>
+                    </div>
+                ) : (
+                    messages.map((msg, index) => (
+                        <div
+                            key={`${msg.timestamp}-${index}`}
+                            className={`flex overflow-auto ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}
+                        >
+                            <div
+                                className={`max-w-3xl rounded-2xl p-4 relative ${msg.sender === 'user'
+                                    ? 'bg-gradient-to-r from-indigo-600 to-purple-600 text-white rounded-br-none shadow-md'
+                                    : 'bg-white text-gray-800 rounded-bl-none shadow-sm border border-gray-100'}`}
+                            >
+                                <p className="whitespace-pre-wrap">{msg.text}</p>
+
+                                {/* Image loading animation */}
+                                {msg.isProcessing && imageLoadingProgress > 0 && (
+                                    <div className="mt-3 w-full bg-gray-100 rounded-full h-2.5">
+                                        <div
+                                            className="bg-gradient-to-r from-indigo-400 to-purple-500 h-2.5 rounded-full transition-all duration-300 ease-out"
+                                            style={{ width: `${imageLoadingProgress}%` }}
+                                        ></div>
+                                    </div>
+                                )}
+
+                                {/* Image display */}
+                                {msg.isImageResponse && generatedImage && (
+                                    <div className="mt-3 relative group">
+                                        <div className="relative overflow-hidden rounded-lg border border-gray-200 shadow-sm">
+                                            <img
+                                                src={generatedImage}
+                                                alt="AI generated content"
+                                                className="w-full h-auto max-h-96 object-contain transition-opacity duration-500"
+                                                style={{ opacity: imageLoadingProgress === 100 ? 1 : 0 }}
+                                                onLoad={() => setImageLoadingProgress(100)}
+                                            />
+                                            {imageLoadingProgress < 100 && (
+                                                <div className="absolute inset-0 flex items-center justify-center bg-gray-50">
+                                                    <div className="animate-pulse flex space-x-2">
+                                                        <div className="w-3 h-3 bg-indigo-300 rounded-full"></div>
+                                                        <div className="w-3 h-3 bg-indigo-400 rounded-full"></div>
+                                                        <div className="w-3 h-3 bg-indigo-500 rounded-full"></div>
+                                                    </div>
+                                                </div>
+                                            )}
+                                        </div>
+                                        <div className="text-xs text-gray-500 mt-1 flex justify-between items-center">
+                                            <span>AI-generated image</span>
+                                            <button
+                                                onClick={() => {
+                                                    const link = document.createElement('a');
+                                                    link.href = generatedImage;
+                                                    link.download = `legacy-ai-${Date.now()}.png`;
+                                                    link.click();
+                                                }}
+                                                className="text-indigo-500 hover:text-indigo-700 text-xs"
+                                            >
+                                                Download
+                                            </button>
+                                        </div>
+                                    </div>
+                                )}
+
+                                {/* Message timestamp */}
+                                <div className={`text-xs mt-1 ${msg.sender === 'user' ? 'text-indigo-100' : 'text-gray-400'}`}>
+                                    {new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
+                                </div>
+                            </div>
+                        </div>
+                    ))
+                )}
+
+                {isLoading && !imageLoadingProgress && (
+                    <div className="flex justify-start">
+                        <div className="bg-white text-gray-800 rounded-2xl rounded-bl-none p-4 max-w-xs shadow-sm border border-gray-100">
+                            <div className="flex space-x-2 items-center">
+                                <div className="w-2 h-2 rounded-full bg-indigo-400 animate-bounce"></div>
+                                <div className="w-2 h-2 rounded-full bg-indigo-500 animate-bounce delay-100"></div>
+                                <div className="w-2 h-2 rounded-full bg-indigo-600 animate-bounce delay-200"></div>
+                                <span className="text-sm ml-2">Thinking...</span>
+                            </div>
+                        </div>
+                    </div>
+                )}
+
+                <div ref={messagesEndRef} />
             </div>
 
             {/* Vault selection modal */}
             {showVaultSelection && generatedImage && (
                 <div className="fixed inset-0 bg-black/50 backdrop-blur-sm flex items-center justify-center p-4 z-50 animate-fade-in">
-                    <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl border border-vintage-200">
+                    <div className="bg-white rounded-xl p-6 w-full max-w-md shadow-xl border border-gray-100">
                         <div className="flex justify-between items-center mb-4">
-                            <h2 className="text-xl font-semibold text-vintage-800">Save to Vault</h2>
+                            <h2 className="text-xl font-semibold text-gray-800">Save to Vault</h2>
                             <button
                                 onClick={() => setShowVaultSelection(false)}
-                                className="p-1 rounded-full hover:bg-vintage-100 transition-colors"
+                                className="p-1 rounded-full hover:bg-gray-100 transition-colors"
                                 disabled={isSaving}
                             >
-                                <svg className="w-5 h-5 text-vintage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <svg className="w-5 h-5 text-gray-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
                                 </svg>
                             </button>
@@ -381,8 +395,8 @@ const LegacyChatbot = () => {
 
                         <div className="space-y-4">
                             <div>
-                                <label className="block text-sm font-medium text-vintage-700 mb-1">Image Preview</label>
-                                <div className="border border-vintage-200 rounded-lg p-2 bg-vintage-50">
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Image Preview</label>
+                                <div className="border border-gray-200 rounded-lg p-2 bg-gray-50">
                                     <img
                                         src={generatedImage}
                                         alt="Preview"
@@ -392,12 +406,12 @@ const LegacyChatbot = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-vintage-700 mb-1">Title*</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Title*</label>
                                 <input
                                     type="text"
                                     value={title}
                                     onChange={(e) => setTitle(e.target.value)}
-                                    className="w-full p-3 border border-vintage-300 rounded-lg focus:ring-2 focus:ring-vintage-500 focus:border-vintage-500"
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                     placeholder="e.g. 'Sunset Landscape'"
                                     autoFocus
                                     disabled={isSaving}
@@ -405,22 +419,22 @@ const LegacyChatbot = () => {
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-vintage-700 mb-1">Description</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
                                 <textarea
                                     value={description}
                                     onChange={(e) => setDescription(e.target.value)}
-                                    className="w-full p-3 border border-vintage-300 rounded-lg focus:ring-2 focus:ring-vintage-500 focus:border-vintage-500 min-h-[100px]"
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 min-h-[100px]"
                                     placeholder="Description of your image"
                                     disabled={isSaving}
                                 />
                             </div>
 
                             <div>
-                                <label className="block text-sm font-medium text-vintage-700 mb-1">Select Vault*</label>
+                                <label className="block text-sm font-medium text-gray-700 mb-1">Select Vault*</label>
                                 <select
                                     value={selectedVault}
                                     onChange={(e) => setSelectedVault(e.target.value)}
-                                    className="w-full p-3 border border-vintage-300 rounded-lg focus:ring-2 focus:ring-vintage-500 focus:border-vintage-500"
+                                    className="w-full p-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                                     disabled={isSaving}
                                 >
                                     <option value="">Choose a vault</option>
@@ -434,14 +448,14 @@ const LegacyChatbot = () => {
                         <div className="flex justify-end space-x-3 mt-6">
                             <button
                                 onClick={() => setShowVaultSelection(false)}
-                                className="px-5 py-2.5 text-sm font-medium text-vintage-700 bg-vintage-100 rounded-lg hover:bg-vintage-200 transition-colors disabled:opacity-50"
+                                className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors disabled:opacity-50"
                                 disabled={isSaving}
                             >
                                 Cancel
                             </button>
                             <button
                                 onClick={handlePostImage}
-                                className="px-5 py-2.5 text-sm font-medium text-white bg-vintage-600 rounded-lg hover:bg-vintage-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[80px]"
+                                className="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center min-w-[80px]"
                                 disabled={!selectedVault || !title.trim() || isSaving}
                             >
                                 {isSaving ? (
@@ -461,11 +475,11 @@ const LegacyChatbot = () => {
 
             {/* Image action bar */}
             {generatedImage && !showVaultSelection && (
-                <div className="p-4 border-t border-vintage-200 bg-white shadow-sm">
+                <div className="p-4 border-t border-gray-200 bg-white shadow-sm">
                     <div className="container mx-auto max-w-4xl flex justify-center space-x-4">
                         <button
                             onClick={() => setGeneratedImage(null)}
-                            className="px-5 py-2.5 text-sm font-medium text-vintage-700 bg-vintage-100 rounded-lg hover:bg-vintage-200 transition-colors flex items-center"
+                            className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center"
                         >
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
@@ -479,7 +493,7 @@ const LegacyChatbot = () => {
                                 link.download = `legacy-ai-${Date.now()}.png`;
                                 link.click();
                             }}
-                            className="px-5 py-2.5 text-sm font-medium text-vintage-700 bg-vintage-100 rounded-lg hover:bg-vintage-200 transition-colors flex items-center"
+                            className="px-5 py-2.5 text-sm font-medium text-gray-700 bg-gray-100 rounded-lg hover:bg-gray-200 transition-colors flex items-center"
                         >
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
@@ -488,7 +502,7 @@ const LegacyChatbot = () => {
                         </button>
                         <button
                             onClick={() => setShowVaultSelection(true)}
-                            className="px-5 py-2.5 text-sm font-medium text-white bg-vintage-600 rounded-lg hover:bg-vintage-700 transition-colors flex items-center"
+                            className="px-5 py-2.5 text-sm font-medium text-white bg-indigo-600 rounded-lg hover:bg-indigo-700 transition-colors flex items-center"
                         >
                             <svg className="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z" />
@@ -500,14 +514,14 @@ const LegacyChatbot = () => {
             )}
 
             {/* Input form */}
-            <form onSubmit={handleSubmit} className="fixed bottom-0 left-0 w-full p-4 border-t border-vintage-200 bg-white z-50">
+            <form onSubmit={handleSubmit} className="p-4 border-t border-gray-200 bg-white">
                 <div className="container mx-auto max-w-4xl">
                     <div className="relative flex items-center">
                         <input
                             type="text"
                             value={input}
                             onChange={(e) => setInput(e.target.value)}
-                            className="flex-1 p-4 pr-12 border border-vintage-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-vintage-500 focus:border-vintage-500 disabled:opacity-70 bg-white"
+                            className="flex-1 p-4 pr-12 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 disabled:opacity-70 bg-white"
                             placeholder="Message Legacy AI..."
                             disabled={isLoading}
                             autoFocus
@@ -515,14 +529,14 @@ const LegacyChatbot = () => {
                         <button
                             type="submit"
                             disabled={isLoading || !input.trim()}
-                            className="absolute right-2 p-2 text-vintage-600 rounded-full hover:bg-vintage-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                            className="absolute right-2 p-2 text-indigo-600 rounded-full hover:bg-indigo-50 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
                         >
                             <svg className="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8" />
                             </svg>
                         </button>
                     </div>
-                    <div className="text-xs text-vintage-500 mt-2 text-center">
+                    <div className="text-xs text-gray-500 mt-2 text-center">
                         Legacy AI can make mistakes. Consider verifying important information.
                     </div>
                 </div>
