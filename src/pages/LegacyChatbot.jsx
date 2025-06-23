@@ -242,7 +242,7 @@ const LegacyChatbot = () => {
                 className="flex-1 overflow-y-auto p-4 space-y-4 container mx-auto max-w-4xl"
             >
                 {messages.length === 0 ? (
-                    <div className="flex flex-col items-center justify-center h-full text-center p-8">
+                    <div data-lenis-prevent className="flex flex-col items-center justify-center h-full text-center p-8">
                         <div className="w-24 h-24 bg-vintage-100 rounded-full flex items-center justify-center mb-6 shadow-inner">
                             <svg className="w-12 h-12 text-vintage-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="1.5" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
