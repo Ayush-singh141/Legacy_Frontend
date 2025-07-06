@@ -734,9 +734,8 @@ function VaultDetail() {
                   <div className="space-y-4">
                     {/* Action buttons */}
                     <div className="flex flex-col gap-3">
-                      <form>
                       <button
-                        form="upload-form"
+                        onClick={(e)=>{handleUpload(e)}}
                         type="submit"
                         disabled={uploading}
                         className="btn-primary w-full text-sm px-4 py-2.5 bg-vintage-600 hover:bg-vintage-700 text-white disabled:bg-vintage-400 transition-colors flex items-center justify-center rounded"
@@ -769,7 +768,7 @@ function VaultDetail() {
                           "Upload Memory"
                         )}
                       </button>
-                      </form>
+
                       <button
                         type="button"
                         onClick={() => setUploadModalOpen(false)}
