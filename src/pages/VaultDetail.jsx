@@ -734,6 +734,7 @@ function VaultDetail() {
                   <div className="space-y-4">
                     {/* Action buttons */}
                     <div className="flex flex-col gap-3">
+                      <form>
                       <button
                         form="upload-form"
                         type="submit"
@@ -768,7 +769,7 @@ function VaultDetail() {
                           "Upload Memory"
                         )}
                       </button>
-
+                      </form>
                       <button
                         type="button"
                         onClick={() => setUploadModalOpen(false)}
