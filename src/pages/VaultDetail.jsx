@@ -735,6 +735,7 @@ function VaultDetail() {
                     {/* Action buttons */}
                     <div className="flex flex-col gap-3">
                       <button
+                        form="upload-form"
                         type="submit"
                         disabled={uploading}
                         className="btn-primary w-full text-sm px-4 py-2.5 bg-vintage-600 hover:bg-vintage-700 text-white disabled:bg-vintage-400 transition-colors flex items-center justify-center rounded"
