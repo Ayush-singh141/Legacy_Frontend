@@ -22,6 +22,7 @@ import { ReactLenis, useLenis } from 'lenis/react'
 import CustomCursor from './components/CustomCursor';
 import OTPFlow from './pages/OTPFlow';
 import LegacyChatbot from './pages/LegacyChatbot';
+import ProfilePage from './pages/ProfilePage';
 
 function App() {
   const lenis = useLenis((lenis) => {})
@@ -88,6 +89,13 @@ function App() {
               <NostalgicPageTransition>
               <PrivateRoute>
                 <Profile />
+              </PrivateRoute>
+              </NostalgicPageTransition>
+            } />
+            <Route path="/user-profile" element={
+              <NostalgicPageTransition>
+              <PrivateRoute>
+                <ProfilePage/>
               </PrivateRoute>
               </NostalgicPageTransition>
             } />

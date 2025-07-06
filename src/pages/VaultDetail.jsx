@@ -89,7 +89,7 @@ function VaultDetail() {
     } else {
       lenis.start();
     }
-  }, [uploadModalOpen , inviteModalOpen]);
+  }, [uploadModalOpen, inviteModalOpen]);
 
   const handleUpload = async (e) => {
     e.preventDefault();
@@ -210,9 +210,29 @@ function VaultDetail() {
     }
   };
 
-  const filteredMemories = memories.filter((memory) => {
-    if (activeTab === "all") return true;
-    return memory.status === activeTab;
+  const [searchTerm, setSearchTerm] = useState("");
+
+  // Update the handleSearch function
+  const handleSearch = (e) => {
+    setSearchTerm(e.target.value.toLowerCase());
+  };
+
+  // Update the filteredMemories calculation to include search
+  let filteredMemories = memories.filter((memory) => {
+    // First filter by active tab
+    if (activeTab !== "all" && memory.status !== activeTab) return false;
+
+    // Then filter by search term if one exists
+    if (searchTerm) {
+      return (
+        memory.title.toLowerCase().includes(searchTerm) ||
+        memory.description.toLowerCase().includes(searchTerm) ||
+        (memory.mediaType && memory.mediaType.toLowerCase().includes(searchTerm))
+        // Add other fields you want to search here
+      );
+    }
+
+    return true;
   });
 
   const stats = {
@@ -363,7 +383,9 @@ function VaultDetail() {
                           </div>
                         )}
                         <div className="flex flex-col">
-                          <div className="text-sm sm:text-base font-medium">
+                          <div onClick={()=>{
+                            navigate('/user-profile',{state:{user:member}})
+                          }} className="text-sm sm:text-base font-medium cursor-pointer hover:underline text-vintage-800">
                             {member.user.name}
                           </div>
                           <div className="text-xs text-vintage-600">
@@ -382,28 +404,49 @@ function VaultDetail() {
               )}
             </div>
           </div>
-          <nav className="flex justify-center space-x-3 mb-6">
-            <button
-              onClick={() => setView("memories")}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
-                View === "memories"
-                  ? "bg-vintage-600 text-white shadow"
-                  : "bg-vintage-100 text-vintage-700 hover:bg-vintage-200"
-              }`}
-            >
-              Memories
-            </button>
+          <nav className="flex flex-col justify-center items-center gap-2 md:flex-row md:justify-evenly lg:flex-row lg:justify-evenly  space-x-3 mb-6">
+            <div className="w-52"></div>
+            <div className="flex items-center space-x-3">
+              <button
+                onClick={() => setView("memories")}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+                  View === "memories"
+                    ? "bg-vintage-600 text-white shadow"
+                    : "bg-vintage-100 text-vintage-700 hover:bg-vintage-200"
+                }`}
+              >
+                Memories
+              </button>
 
-            <button
-              onClick={() => setView("timeline")}
-              className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
-                View === "timeline"
-                  ? "bg-vintage-600 text-white shadow"
-                  : "bg-vintage-100 text-vintage-700 hover:bg-vintage-200"
-              }`}
-            >
-              Timeline
-            </button>
+              <button
+                onClick={() => setView("timeline")}
+                className={`px-4 py-2 rounded-full text-sm font-medium transition-colors duration-200 ${
+                  View === "timeline"
+                    ? "bg-vintage-600 text-white shadow"
+                    : "bg-vintage-100 text-vintage-700 hover:bg-vintage-200"
+                }`}
+              >
+                Timeline
+              </button>
+            </div>
+            {View === "memories" ? (
+              <div className="flex gap-2 items-center -ml-1 mb-0 mt-4 md:mt-0 lg:mt-0">
+                <input
+                  onChange={(e) => {
+                    handleSearch(e);
+                  }}
+                  placeholder="Search Memories"
+                  autoComplete="off"
+                  autoCorrect="off"
+                  spellCheck="false"
+                  className="outline-1 outline-vintage-700 border border-vintage-500 rounded-md h-9 px-3 text-sm sm:text-base w-full placeholder-vintage-400 focus:outline focus:outline-2 focus:outline-vintage-500 transition-colors duration-200 text-vintage-800"
+                  type="text"
+                />
+                
+              </div>
+            ) : (
+              <div className="w-56"></div>
+            )}
           </nav>
 
           {/* Memories Section */}

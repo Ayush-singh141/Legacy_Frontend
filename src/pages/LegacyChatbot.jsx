@@ -16,7 +16,7 @@ const LegacyChatbot = () => {
     const [imageLoadingProgress, setImageLoadingProgress] = useState(0);
     const messagesEndRef = useRef(null);
     const chatContainerRef = useRef(null);
-
+    const [userVaults, setUserVaults] = useState([]);
     // APIs
     const TEXT_API = 'https://api-hub-backend.onrender.com/api/v1/auth/testforopenai';
     const IMAGE_API = 'https://image-generation-api-for-anubis.onrender.com/generate-image';
@@ -44,6 +44,23 @@ const LegacyChatbot = () => {
     const scrollToBottom = () => {
         messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
     };
+    useEffect(() => {
+        ///create a async function to fetch all the users vaults by using a map over user.vaults from the endpoint ${import.meta.env.VITE_BACKEND_URL}/api/vaults/:id use debouncing for fetching and appending to userVaults
+        const fetchUserVaults = async () => {  
+            if (!user || !user.vaults || user.vaults.length === 0) return;
+
+            try {
+                const vaults = await Promise.all(user.vaults.map(async (vaultId) => {
+                    const response = await axios.get(`${import.meta.env.VITE_BACKEND_URL}/api/vaults/${vaultId}`);
+                    return response.data.vault;
+                }));
+                setUserVaults(vaults);
+            } catch (error) {
+                console.error("Failed to fetch user vaults:", error);
+            }
+        }
+        fetchUserVaults();
+    }, [user]);
 
     // Generate description using Gemini API
     const generateDescription = async (prompt) => {
@@ -416,8 +433,8 @@ const LegacyChatbot = () => {
                                     disabled={isSaving}
                                 >
                                     <option value="">Choose a vault</option>
-                                    {user?.vaults?.map((vault, index) => (
-                                        <option key={index} value={vault}>{vault}</option>
+                                    {userVaults.map((vault, index) => (
+                                        <option key={index} value={vault._id}>{vault.name}</option>
                                     ))}
                                 </select>
                             </div>
