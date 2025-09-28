@@ -210,6 +210,47 @@ function VaultDetail() {
     }
   };
 
+  const handleRemoveMember = async (memberEmail) => {
+    try {
+      if (
+        !window.confirm(
+          `Are you sure you want to remove ${memberEmail} from this vault?`
+        )
+      ) {
+        return;
+      }
+
+      await axios.post(
+        `${import.meta.env.VITE_BACKEND_URL}/api/vaults/remove-member`,
+        {
+          vaultId: id,
+          email: memberEmail,
+        },
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+
+      // Refresh vault data to get updated members list
+      const vaultRes = await axios.get(
+        `${import.meta.env.VITE_BACKEND_URL}/api/vaults/${id}`,
+        {
+          headers: {
+            Authorization: `Bearer ${token}`,
+          },
+        }
+      );
+      setVault(vaultRes.data.vault);
+
+      toast.success("Member removed successfully");
+    } catch (error) {
+      console.error("Remove member error:", error.response?.data);
+      toast.error(error.response?.data?.error || "Failed to remove member");
+    }
+  };
+
   const [searchTerm, setSearchTerm] = useState("");
 
   // Update the handleSearch function
@@ -398,6 +439,17 @@ function VaultDetail() {
                           </span>
                         )}
                       </div>
+                      
+                      {/* Remove member button - only show for admins and not for the current user */}
+                      {isAdmin && member.user._id !== user?._id && (
+                        <button
+                          onClick={() => handleRemoveMember(member.user.email)}
+                          className="text-red-500 hover:text-red-700 p-1 rounded-full hover:bg-red-50 transition-colors"
+                          title="Remove member"
+                        >
+                          <XCircleIcon className="h-5 w-5" />
+                        </button>
+                      )}
                     </div>
                   ))}
                 </div>
